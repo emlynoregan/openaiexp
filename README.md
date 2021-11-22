@@ -1,7 +1,7 @@
 # openaiexp
 # OpenAI Experiments
 
-This is a general repo for experimenting with openai
+This is a general repo for experimenting with OpenAI. You'll need python 3.
 
 To get set up, 
 - copy the file *setcreds template.py* to *setcreds.py*, and put your OpenAI api key in it.
