@@ -179,7 +179,7 @@ def orc_acts(action):
 
     completion = openai.Completion.create(
         engine="davinci", 
-        max_tokens=32, 
+        max_tokens=2, 
         temperature=temperature,
         prompt=question,
         frequency_penalty=1.0

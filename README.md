@@ -8,10 +8,21 @@ To get set up,
     - go to your openai account and get your api key from settings
 - pip install --upgrade openai
     - (see here: https://github.com/openai/openai-python)
+- pip install --upgrade mergedeep
+    - for the scene engine
+    - (see here: https://pypi.org/project/mergedeep/)
+
+## scene_orc.py
+
+Better Orc simulator! Run the program like this:
+
+    > python scene_orc.py
+
+and try to get the amulet.
 
 ## orc.py
 
-Orc simulator! Run the program like this:
+Original Orc simulator! Run the program like this:
 
     > python orc.py
 
