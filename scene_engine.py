@@ -2,18 +2,20 @@ import setcreds
 import openai
 import mergedeep
 import random
+import copy
 
-_diags = False
+_diags = 0
 
-def diag(msg):
-    if _diags:
+def diag(msg, level=5):
+    if _diags >= level:
         print(f"***{msg}")
 
-def run_game(scenes, start_scene_id, diagnostics = False):
+def run_game(scenes, start_scene_id, diagnostics = False, talk_engine="davinci", question_engine="curie",
+    npc_talk_max_tokens=64):
     global _diags
     _diags = diagnostics
 
-    scene = scenes[start_scene_id]
+    scene = {**scenes[start_scene_id]}
 
     new_scene = True
 
@@ -46,6 +48,7 @@ def run_game(scenes, start_scene_id, diagnostics = False):
         
         # continue here
 
+        # probably remove this section, npcs don't need actions.
         npcs = scene.get('npcs') or []
         if npcs:
             for _, npc in npcs.items():
@@ -60,11 +63,11 @@ def run_game(scenes, start_scene_id, diagnostics = False):
                                 diag(f"min_turn: {min_turn}")
 
                                 if min_turn <= turn:
-                                    if npc_action_fires(npc, action, scene, history):
+                                    if npc_action_fires(npc, action, scene, history, question_engine):
                                         diag(f"action fires!")
                                         to_scene_id = action.get('to_scene')
                                         to_scene = scenes[to_scene_id]
-                                        scene = mergedeep.merge(scene, to_scene)
+                                        scene = do_merge(scene, to_scene)
                                         new_scene = True
 
                                         transition_pdesc = action.get('transition_pdesc')
@@ -74,14 +77,50 @@ def run_game(scenes, start_scene_id, diagnostics = False):
                                         transition_ndesc = action.get('transition_ndesc')
                                         if transition_ndesc:
                                             history.append(transition_ndesc)
+                                        break
                                     else:
                                         diag(f"action doesn't fire")
                                 else:
                                     diag(f"too early for action")
+                        if new_scene:
+                            break
                     else:
                         diag(f"no npc actions")
         else:
             diag(f"no npcs")
+
+        actions = scene.get('actions') or []
+        if actions:
+            diag(f"npc actions")
+            for action_name, action in actions.items():
+                if action:
+                    diag(f"action: {action_name}")
+                    min_turn = action.get('min_turn') or 0
+                    diag(f"min_turn: {min_turn}")
+
+                    if min_turn <= turn:
+                        if npc_action_fires(npc, action, scene, history, question_engine):
+                            diag(f"action fires!")
+                            to_scene_id = action.get('to_scene')
+                            to_scene = scenes[to_scene_id]
+                            scene = do_merge(scene, to_scene)
+                            new_scene = True
+
+                            transition_pdesc = action.get('transition_pdesc')
+                            if transition_pdesc:
+                                print(transition_pdesc)
+
+                            transition_ndesc = action.get('transition_ndesc')
+                            if transition_ndesc:
+                                history.append(transition_ndesc)
+                            break
+                        else:
+                            diag(f"action doesn't fire")
+                    else:
+                        diag(f"too early for action")
+        else:
+            diag(f"no actions")
+
 
         if not new_scene:
             #see if npc talks
@@ -94,7 +133,7 @@ def run_game(scenes, start_scene_id, diagnostics = False):
                         p = random.random()
                         if p <= talk_p:
                             diag(f"npc talks")
-                            talk = get_npc_talk(npc, scene, history)
+                            talk = get_npc_talk(npc, scene, history, talk_engine, npc_talk_max_tokens=npc_talk_max_tokens)
                             full_talk = f"{shortdesc} says:{talk}"
                             history.append(full_talk)
                             print(full_talk)
@@ -107,7 +146,7 @@ def run_game(scenes, start_scene_id, diagnostics = False):
             player = scene.get('player')
 
             while not (player_action or player_talk):
-                player_input = input("> ")
+                player_input = input("You say > ")
 
                 if not player_input:
                     player_action_lines = get_player_action_lines(player)
@@ -144,7 +183,7 @@ def run_game(scenes, start_scene_id, diagnostics = False):
 
                 to_scene_id = player_action.get('to_scene')
                 to_scene = scenes[to_scene_id]
-                scene = mergedeep.merge(scene, to_scene)
+                scene = do_merge(scene, to_scene)
                 new_scene = True
             elif player_talk:
                 shortdesc = player.get('nshortdesc') or "The player"
@@ -153,46 +192,57 @@ def run_game(scenes, start_scene_id, diagnostics = False):
 
         turn += 1
 
+def do_merge(scene, to_scene):
+    to_scene2 = copy.deepcopy(to_scene)
+    scene2 = copy.deepcopy(scene)
+    return mergedeep.merge(scene2, to_scene2)
 
-def npc_action_fires(npc, npc_action, scene, history):
+def npc_action_fires(npc, npc_action, scene, history, engine):
     q_and_a_lines = npc_action.get('q_and_a_lines')
     answer = npc_action.get('answer')
+    logit_bias = npc_action.get('logit_bias')
 
-    about_lines = npc.get('about_lines')
-    # talk_lines = npc.get('talk_lines')
-    talk_prompt = npc.get('talk_prompt')
-    prompt_lines = get_npc_look_lines(scene) + [""] + \
-        about_lines + [""] + \
-        history + [""] + q_and_a_lines
+    if q_and_a_lines:
+        about_lines = npc.get('about_lines') if npc else []
+        # talk_prompt = npc.get('talk_prompt') i
+        prompt_lines = get_npc_look_lines(scene) + [""] + \
+            about_lines + [""] + \
+            history + [""] + q_and_a_lines
 
-    prompt = "\n".join(prompt_lines)
+        prompt = "\n".join(prompt_lines)
 
-    diag (f"npc action prompt: {prompt}")
+        diag (f"npc action prompt: {prompt}", level=4)
 
-    temperature = 0.2
+        temperature = 0
 
-    completion = openai.Completion.create(
-        engine="davinci", 
-        max_tokens=2, 
-        temperature=temperature,
-        prompt=prompt,
-        frequency_penalty=0
-    )
+        completion = openai.Completion.create(
+            engine=engine, 
+            max_tokens=2, 
+            temperature=temperature,
+            prompt=prompt,
+            frequency_penalty=0,
+            logprobs=5,
+            logit_bias=logit_bias
+        )
 
-    ai_raw_msg = completion.choices[0].text
-    # print(f"ai_raw_msg: {ai_raw_msg}")
+        diag(f"completion: {completion}", level=4)
 
-    ai_msg_lines = ai_raw_msg.split("\n")
+        ai_raw_msg = completion.choices[0].text
+        # print(f"ai_raw_msg: {ai_raw_msg}")
 
-    ai_msg = ai_msg_lines[0]
+        ai_msg_lines = ai_raw_msg.split("\n")
 
-    npc_answer = ai_msg.lower().strip()
+        ai_msg = ai_msg_lines[0]
 
-    diag(f"npc answer: {npc_answer}")
+        npc_answer = ai_msg.lower().strip()
 
-    return npc_answer == (answer or "yes")
+        diag(f"npc answer: {npc_answer}")
 
-def get_npc_talk(npc, scene, history):
+        return npc_answer == (answer or "yes")
+    else:
+        return True
+
+def get_npc_talk(npc, scene, history, engine, npc_talk_max_tokens=64):
     about_lines = npc.get('about_lines')
     talk_lines = npc.get('talk_lines')
     talk_prompt = npc.get('talk_prompt')
@@ -201,14 +251,14 @@ def get_npc_talk(npc, scene, history):
         talk_lines + [""] + \
         history + ["", talk_prompt]
 
-    temperature = 1.0
+    temperature = 0.8
 
     prompt = "\n".join(prompt_lines)
     diag(f"npc talk prompt: {prompt}")
 
     completion = openai.Completion.create(
-        engine="davinci", 
-        max_tokens=32, 
+        engine=engine, 
+        max_tokens=npc_talk_max_tokens, 
         temperature=temperature,
         prompt=prompt,
         frequency_penalty=0
@@ -230,21 +280,21 @@ def get_player_look_lines(scene):
     scene_desc = scene.get('pdesc')
     if scene_desc:
         lines.append(scene_desc)
-        lines.append("")
+        # lines.append("")
     
     player = scene.get('player')
     if player:
-        player_desc = player.get('pdesc') or "You are here."
-        if player_desc:
-            lines.append(player_desc)
-            player_items = player.get('items')
-            if player_items:
-                for _, item in player_items.items():
-                    if item:
-                        item_desc = item.get('desc')
-                        if item_desc:
-                            lines.append(f"You are holding {item_desc}.")
-            lines.append("")
+        # player_desc = player.get('pdesc') or "You are here."
+        # if player_desc:
+        #     lines.append(player_desc)
+        player_items = player.get('items')
+        if player_items:
+            for _, item in player_items.items():
+                if item:
+                    item_desc = item.get('desc')
+                    if item_desc:
+                        lines.append(f"You are holding {item_desc}.")
+        # lines.append("")
 
     lines.extend(get_npc_lines(scene))    
 

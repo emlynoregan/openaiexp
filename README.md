@@ -5,7 +5,7 @@ This is a general repo for experimenting with OpenAI. You'll need python 3.
 
 To get set up, 
 - copy the file *setcreds template.py* to *setcreds.py*, and put your OpenAI api key in it.
-    - go to your openai account and get your api key from settings
+    - sign up for an account at [openai](https://openai.com/) and get your api key from settings
 - pip install --upgrade openai
     - (see here: https://github.com/openai/openai-python)
 - pip install --upgrade mergedeep
