@@ -2,7 +2,7 @@ from scene_engine import run_game
 
 keywords = ["chalice", "mantle", "beast", "arcane", "ceremony", "lenkar", "elderberry", "corrupted"]
 
-lairs = ["The Mountains of Despair", "The Dragon Mountains", "The Orange Swamp", "The Dungeons of Errinhold", "The Ruins of Freidberg Castle", "The Dragon Mountain"]
+lairs = ["The Mountains of Despair", "The Dragon Mountains", "The Orange Swamp", "The Dungeons of Errinhold", "The Ruins of Freidberg Castle", "The Blasted Waste"]
 
 import random
 keyword = random.choice(keywords)
@@ -64,7 +64,7 @@ def calc_silverleaf_after_gronk():
 
 def calc_silverleaf_running_from_zombies():
     return {
-        "pdesc": "A slight female elf is here, dressed in a travelling cloak. She carries a bow and quiver of arrows.",
+        "pdesc": "A slight female elf is here, dressed in a travelling cloak. She is running from the zombies. She carries a bow and quiver of arrows.",
         "shortdesc": "The elf",
         "about_lines": [
             "The elf's name is Silverleaf.",
@@ -230,11 +230,11 @@ def calc_wizard_in_bw_entryway():
 
 def calc_chef():
     return {
-        "pdesc": "The chef is here, dressed in white clothes and an apron.",
+        "pdesc": "The chef is here, dressed in white clothes and an apron. She is hiding under a table.",
         "shortdesc": "The chef",
         "about_lines": [
             "The chef cowers under the table.",
-            "The chef is very scared.",
+            "The chef is shaking, she is very scared.",
             "The chef knows that Wretched is in the kitchen.",
             "Wretched knows the keyword.",
             "Wretched is half goblin and half bear."
@@ -276,12 +276,12 @@ def calc_wretched():
         "talk_p": 1.0
     }
 
-def calc_philbert_training():
+def calc_libby_training():
     return {
-        "pdesc": "There is an anthropomorphic mushroom creature here, in a pot. It is purple with yellow spots. It waves to you. On his pot is a note: 'The mushroom doesn't know the keyword, don't believe him'",
+        "pdesc": "There is an anthropomorphic mushroom creature here, in a pot. It is purple with yellow spots. She waves to you. On her pot is a note: 'The mushroom doesn't know the keyword, don't believe her'",
         "shortdesc": "The mushroom",
         "about_lines": [
-            "The mushroom is called Philbert. He is purple with yellow spots."
+            "The mushroom is called Libby. She is purple with yellow spots."
             "The mushroom is happy and talkative.",
             "The mushroom does not know the keyword.",
             "The mushroom knows that Wretched knows the keyword.",
@@ -304,11 +304,101 @@ def calc_philbert_training():
         "talk_p": 1.0
     }
 
+def calc_lizardman_friendly():
+    return {
+        "pdesc": """There is a lizardman guard outside the door. He is wearing studded leather armour, and carries a short sword.
+He has a ring of keys on his belt.
+        """,
+        "shortdesc": "The lizardman",
+        "about_lines": [
+            "The lizardman doesn't like guarding the dungeon."
+            "The lizardman loves singing.",
+            "The lizardman is friendly."
+        ],
+        "talk_lines": [
+            "The lizardman says: Me so bored. Not like guarding.",
+            "The lizardman says: Me like music.",
+            "The lizardman says: What you say? Interesting.",
+            "The lizardman says: You me friend, me like you.",
+            "The lizardman says: Me like the song 'Me lizardman and live in bog', you know?"
+        ],
+        "talk_prompt": "The lizardman says:",
+        "talk_p": 1.0
+    }
+
+def calc_lizardman_suspicious():
+    return {
+        "pdesc": """There is a lizardman guard outside the door. He is wearing studded leather armour, and carries a short sword.
+He has a ring of keys on his belt.
+        """,
+        "shortdesc": "The lizardman",
+        "about_lines": [
+            "The lizardman doesn't like guarding the dungeon.",
+            "The lizardman insults the barkeep.",
+            "The lizardman longs for the swamps.",
+            "The lizardman likes music."
+        ],
+        "talk_lines": [
+            "The lizardman says: Me so bored. Not like guarding.",
+            "The lizardman says: So quiet, so boring.",
+            "The lizardman says: Not talk to you, human, you prisoner.",
+            "The lizardman says: Me smart, not be tricked.",
+            "The lizardman says: You stupid head, you prisoner."
+        ],
+        "talk_prompt": "The lizardman says:",
+        "talk_p": 1.0
+    }
+
+def calc_eric_unknown():
+    return {
+        "pdesc": """The wizard wears a dark cloak, his face in shadow.""",
+        "ndesc": """You wears a dark cloak, your face in shadow.""",
+        "shortdesc": "The dark wizard",
+        "about_lines": [
+            "The dark wizard is secretive.",
+            "The dark wizard is friendly.",
+            "The dark wizard wants to know who the barkeep's friends are.",
+            "The dark wizard wants to know why the barkeep is here.",
+            "The dark wizard is nervous."
+        ],
+        "talk_lines": [
+            "The dark wizard says: So, who are you anyway, ey?",
+            "The dark wizard says: How did you end up roaming around these halls, mate?",
+            "The dark wizard says: You were with some other people, weren't you? Who were they?",
+            "The dark wizard says: Shh, they might hear us. Just whisper, got it?",
+        ],
+        "talk_prompt": "The dark wizard says:",
+        "talk_p": 1.0
+    }
+
+def calc_eric_friendly():
+    return {
+        "pdesc": """Eric, a young wizard with black hair.""",
+        "ndesc": """You're showing your face to the barkeep; you have black hair.""",
+        "shortdesc": "Eric",
+        "about_lines": [
+            "Eric is open and friendly.",
+            "Eric wonders what to do next.",
+            "Eric wants to find Lungar and Silverleaf.",
+            "Eric hates the dark wizards."
+        ],
+        "talk_lines": [
+            "Eric says: We should find Lungar and Silverleaf.",
+            "Eric says: I hate these wizards, mate, they are so evil.",
+            "Eric says: These wizards kidnapped me. I learned powerful magic.",
+            "Eric says: I've been hoping Lungar would turn up!",
+            "Eric says: We can burn these guys down.",
+            "Eric says: I grew up in a village called Lenkar, with Lungar!",
+        ],
+        "talk_prompt": "Eric says:",
+        "talk_p": 1.0
+    }
+
 def calc_scene_for_portal(index):
     chosen_portal = portals[index]
 
     if chosen_portal == lair:
-        return "gameover"
+        return "cell1"
     elif chosen_portal == death:
         return "gameover"
     elif chosen_portal == death2:
@@ -321,6 +411,32 @@ def calc_transition_for_portal(index):
         return """You put your head through the portal, and see some kind of store room. It's fairly dark. There is a door which is slightly ajar.
 "Ok, this will do" you decide. You pull your head back out. "This way!" you shout. You jump through the portal, and Lungar and 
 Silverleaf come piling in after you. The three of you tumble into the room in a pile of bodies.
+
+You brush yourselves off, and look around. There is only one door. Silverleaf opens it a crack, and light shines through. Suddenly she 
+slams it shut. "No, that's not good at all" she says. 
+
+The door bursts open and armoured guards pile in, pointing swords at you all. A big fellow says "Right, you're coming with us."
+
+Lungar grabs the first two and bangs their heads together. As they collapse, Silverleaf dances out of the way of another one, then leaps up to grab a 
+hook in the ceiling. She drops on top of the guard, and twists his helmet around so he can't see, then jumps off as the fellow stumbles into a wall and
+falls over. 
+
+Lungar roars and charges the next guard with his head, crashing through him and through the door. 
+
+"Come on!," shouts Silverleaf. "Let's go, barkeep!". You both run out of the room, and into a melee in the well lit hallway.
+
+You grab a broom and try to keep the guards at a distance, while Lungar and Silverleaf leap around, bashing everyone in reach.
+
+Suddenly the lights dim, and you hear a chanting in an arcane language. You see a group of hooded figures down the hall, all facing you.
+
+"Glooble moople rerkle blerpo snerble" they recite, or at least it sounds something like that. For some reason, you feel weak, and sleepy.
+Everyone around you, the guards, Silverleaf & Lungar, stop their fighting, and begin to collapse to the floor. Everything goes dark.
+
+Just as you're about to pass out, you notice one of the wizards step back from the others. Surprised?
+
+---
+
+You wake up and find yourself in a little stone cell, alone. 
 """
     elif chosen_portal == death:
         return """You carefully poke your head into the portal. The last thing you feel is the molten lava that surrounds you. You are dead.
@@ -331,6 +447,28 @@ toward you, and before you can blink, it shoots a sticky tongue into your face. 
 snaps you up with one bite. You are dead.
 """
 
+def calc_reunion_transition():
+    return """Eric leads off down a set of twisty passages. Soon you come to a cell, and you bump into
+two lizardman guards.
+
+"Right you two, give me the keys and go." he says.
+
+"Ok, boss" they say. They hand over the keys and walk off. "Hey you wanna get some swamp beer?" says one. "Yeah!" says the other.
+
+Eric frantically jams the key in the cell door. "Come out, guys!" he exclaims.
+
+Lungar and Silverleaf slowly emerge. Lungar suddenly freezes, his mouth agape.
+
+"Oh, is it really you?" he says. "It is, it really really is!" He lunges toward Eric, and grabs him in a bear hug.
+
+"Wow, you found Eric, barkeep!" says Silverleaf. "This is amazing!"
+
+After a few minutes, Eric and Lungar are reunited.
+
+"Now what?" asks Lungar.
+
+Now what, indeed! This is the end of this chapter of the New Adventures of Lungar. Thanks for playing!
+"""
 
 scenes = {
     "tavern": {
@@ -339,6 +477,8 @@ scenes = {
         "pdesc": """The Squealing Pig is loud on a Satyr's day eve. It's just on summer, and you're expecting the people of the town to 
 turn out in numbers tonight. It's still early though, still light, so the tavern is fairly empty; you've got plenty of time to set up, get 
 ready for the rush. 
+
+You are the barkeep.
 
 Suddenly there is some sort of commotion over in the back; a big fellow shouting. Gronk! He's always trouble. You decide you'd better 
 talk him down before he flies off the handle. 
@@ -625,7 +765,7 @@ There are doors to the north (/N) and South (/S). You'd better pick one of those
             "lungar": calc_lungar_in_bw(),
             "wizard": calc_wizard_in_bw_entryway(),
             "chef": None,
-            "philbert": None,
+            "libby": None,
         }
     },
     "bw-mess": {
@@ -779,7 +919,7 @@ as the zombies crash into it. "Out of the frying pan, into... something?" says S
             "lungar": None,
             "silverleaf": None,
             "chef": None,
-            "philbert": calc_philbert_training()
+            "libby": calc_libby_training()
         }
     },
     "bw-archive": {
@@ -824,7 +964,7 @@ Secondly, they are based in {lair}.
             "lungar": None,
             "silverleaf": None,
             "chef": None,
-            "philbert": None
+            "libby": None
         }
     },
     "bw-archive2": {
@@ -856,7 +996,7 @@ There is a door in the north wall (/N).
             "lungar": None,
             "silverleaf": None,
             "chef": None,
-            "philbert": None
+            "libby": None
         }
     },
     "bw-portal": {
@@ -902,7 +1042,171 @@ There is a door to the south which is being held closed by Lungar and Silverleaf
         "npcs": {
             "lungar": calc_lungar_in_bw(),
             "silverleaf": calc_silverleaf_in_bw_portal(),
-            "philbert": None
+            "libby": None
+        }
+    },
+    "cell1": {
+        "turn": 0,
+        "look": False,
+        "pdesc": """You are in a tiny dark stone cell in a dungeon. On the wall you see an engraving: "The lizard likes music".""",
+        "ndesc": """You are guarding a human prisoner. You are so bored.""",
+        "player": {
+            "actions": {
+                "1": None,
+                "2": None,
+                "3": None
+            }
+        },
+        "actions": {
+            "sing song":{
+                "min_turn": 2,
+                "q_and_a_lines": [
+                    # "q: is three less two? a: no",
+                    # "q: is five greater than one? a: yes",
+                    "q: are most sheep white? a: yes",
+                    "q: is there a dragon here? a: no",
+                    "q: is a true statement true? a: yes",
+                    f"q: did the barkeep mention singing or music? a:"
+                ],
+                "answer": "yes",
+                "logit_bias": {3763: -0.5},
+                "logit_note": "645 is ' no'",
+                "to_scene": "cell2",
+                "transition_pdesc": """'Oh, you do music? Me like that.' says the lizardman.
+"""
+            },
+            "open door":{
+                "min_turn": 4,
+                "q_and_a_lines": [
+                    "q: are most sheep white? a: yes",
+                    "q: is there a dragon here? a: no",
+                    "q: is a true statement true? a: yes",
+                    f"q: does the lizardman open the cell door? a:"
+                ],
+                "answer": "yes",
+                "logit_bias": {3763: -0.8},
+                "logit_note": "645 is ' no'",
+                "to_scene": "eric1",
+                "transition_pdesc": """'Me sick of being guard. You take keys.' says the lizardman. He hands the keys through the bars,
+then wanders off down the corridor.
+
+You can't believe your luck. You quietly open your door, and sneak out, past the sleeping
+guard, and down the corridor, disappearing around a corner. 
+"""
+            },
+            "1": None,
+            "2": None,
+            "3": None
+        },
+        "npcs": {
+            "wizard": None,
+            "lungar": None,
+            "silverleaf": None,
+            "chef": None,
+            "libby": None,
+            "lizardman": calc_lizardman_suspicious()
+        }
+    },
+    "cell2": {
+        "turn": 0,
+        "look": False,
+        "pdesc": """You are in a tiny dark stone cell in a dungeon. On the wall you see an engraving: "The lizard likes music".""",
+        "ndesc": """You are guarding a human prisoner. You love his music and singing.""",
+        "player": {
+        },
+        "actions": {
+            "sing song": None,
+            "open door":{
+                "min_turn": 1,
+                "q_and_a_lines": [
+                    "q: are most sheep white? a: yes",
+                    "q: is there a dragon here? a: no",
+                    "q: is a true statement true? a: yes",
+                    f"q: does the lizardman open the cell door? a:"
+                ],
+                "answer": "yes",
+                "logit_bias": {3763: -0.4},
+                "logit_note": "645 is ' no'",
+                "to_scene": "eric1",
+                "transition_pdesc": """'Me sick of being guard. You take keys.' says the lizardman. He hands the keys through the bars,
+then wanders off down the corridor.
+
+You can't believe your luck. You quietly open your door, and sneak out, creeping the opposite way down the corridor... 
+
+As you round a corner, you come face to face with a hooded figure. It's a wizard!
+"""
+            },
+            "1": None,
+            "2": None,
+            "3": None
+        },
+        "npcs": {
+            "wizard": None,
+            "lungar": None,
+            "silverleaf": None,
+            "chef": None,
+            "libby": None,
+            "lizardman": calc_lizardman_friendly()
+        }
+    },
+    "eric1": {
+        "turn": 0,
+        "look": False,
+        "pdesc": """You are in a dark corridor of the dungeons.""",
+        "ndesc": """You are in a dark corridor of the dungeons.""",
+        "player": {
+        },
+        "actions": {
+            "sing song": None,
+            "open door": None,
+            "mention friends": {
+                "min_turn": 1,
+                "q_and_a_lines": [
+                    "q: are most sheep white? a: yes",
+                    "q: is there a dragon here? a: no",
+                    "q: is a true statement true? a: yes",
+                    f"q: did the barkeep mention Silverleaf or Lungar? a:"
+                ],
+                "answer": "yes",
+                "logit_bias": {3763: -0.4},
+                "logit_note": "645 is ' no'",
+                "to_scene": "eric2",
+                "transition_pdesc": """'So it's true! It's Lungar and Silverleaf!' says the wizard. He pulls back his cloak to reveal
+a young face, with short black hair.
+
+"Hi, my name is Eric" he says.
+"""
+            },
+            "1": None,
+            "2": None,
+            "3": None
+        },
+        "npcs": {
+            "lizardman": None,
+            "eric": calc_eric_unknown()
+        }
+    },
+    "eric2": {
+        "turn": 0,
+        "look": False,
+        "pdesc": """You are in a dark corridor of the dungeons.""",
+        "ndesc": """You are in a dark corridor of the dungeons.""",
+        "player": {
+            "actions": {
+                "r": {
+                    "desc": "[/R]escue Lungar and Silverleaf",
+                    "ptext": calc_reunion_transition(),
+                    "ntext": calc_reunion_transition(),
+                    "to_scene": "gameover"
+                }
+            }
+        },
+        "actions": {
+            "mention friends": None
+        },
+        "npcs": {
+            "lizardman": None,
+            "eric": calc_eric_friendly()
         }
     },
     "gameover": {
@@ -919,5 +1223,6 @@ print ("===========================================")
 #run_game(scenes, 'tavern', diagnostics=4, talk_engine="davinci", question_engine="davinci")
 
 
-run_game(scenes, 'bw-hall', diagnostics=0, talk_engine="davinci", question_engine="davinci")
-# run_game(scenes, 'tavern', diagnostics=0, talk_engine="davinci", question_engine="davinci")
+# run_game(scenes, 'cell1', diagnostics=0, talk_engine="davinci", question_engine="davinci")
+# run_game(scenes, 'bw-hall', diagnostics=0, talk_engine="davinci", question_engine="davinci")
+run_game(scenes, 'tavern', diagnostics=0, talk_engine="davinci", question_engine="davinci")

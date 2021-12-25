@@ -27,7 +27,7 @@ def run_game(scenes, start_scene_id, diagnostics = False, talk_engine="davinci",
         diag(f"turn: {turn}")
         
         # shrink history
-        while len(history) > 10:
+        while len(history) > 20:
             remove_ix = random.randint(0, len(history) - 1)
             del history[remove_ix]
 
@@ -110,7 +110,7 @@ def run_game(scenes, start_scene_id, diagnostics = False, talk_engine="davinci",
                             if transition_pdesc:
                                 print(transition_pdesc)
 
-                            transition_ndesc = action.get('transition_ndesc')
+                            transition_ndesc = action.get('transition_ndesc') or action.get('transition_pdesc')
                             if transition_ndesc:
                                 history.append(transition_ndesc)
                             break
@@ -242,7 +242,7 @@ def npc_action_fires(npc, npc_action, scene, history, engine):
     else:
         return True
 
-def get_npc_talk(npc, scene, history, engine, npc_talk_max_tokens=64):
+def get_npc_talk(npc, scene, history, engine, npc_talk_max_tokens=128):
     about_lines = npc.get('about_lines')
     talk_lines = npc.get('talk_lines')
     talk_prompt = npc.get('talk_prompt')
@@ -261,7 +261,7 @@ def get_npc_talk(npc, scene, history, engine, npc_talk_max_tokens=64):
         max_tokens=npc_talk_max_tokens, 
         temperature=temperature,
         prompt=prompt,
-        frequency_penalty=0
+        frequency_penalty=0.1
     )
 
     ai_raw_msg = completion.choices[0].text
